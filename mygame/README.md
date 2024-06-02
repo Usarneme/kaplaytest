@@ -25,3 +25,7 @@ $ npm run bundle
 ```
 
 will build your game and package into a .zip file, you can upload to your server or itch.io / newground etc.
+
+### Image Credit
+
+Background Photo by ersin izan: https://www.pexels.com/photo/23408706/

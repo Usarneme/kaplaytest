@@ -13,7 +13,7 @@ scene("game", () => {
   const smiley = add([
     sprite("smiley"),
     pos(250, 300),
-    scale("0.2"),
+    scale("0.15"),
     area(),
     body(),
   ])
@@ -33,13 +33,52 @@ scene("game", () => {
     // if (smiley.isGrounded()) smiley.jump() // conditionally only jump if on ground
   })
 
+  onClick(() => smiley.jump())
+
   // onClick(() => addKaboom(mousePos()))
 
   // spawn a tree at a random interval
-  // function spawnTree() {
+  function spawnTree() {
+    const treeHeight = Math.floor(Math.random() * (height() - 300))
+    const oppositeTreeHeight = height() - treeHeight - 300
+
+    add([
+      rect(48, rand(24, treeHeight)),
+      area(),
+      outline(4),
+      pos(width(), height() - 48),
+      anchor("botleft"), // bottom left
+      color(rand(255), rand(255), rand(255)),
+      move(LEFT, 240),
+      "tree", // tag name to use for collision detection
+    ])
+
+    add([
+      rect(48, rand(24, oppositeTreeHeight)),
+      area(),
+      outline(4),
+      pos(width(), 0),
+      anchor("topleft"),
+      color(rand(255), rand(255), rand(255)),
+      move(LEFT, 240),
+      "tree", // tag name to use for collision detection
+    ])
+
+    wait(rand(1, 3), spawnTree)
+  }
+
+  spawnTree()
+
+  // loop(0.5, () => {
+  //   spawnTree()
+  // })
+
+  // have "trees" come continuously
+  // loop(rand(0.75, 2), () => {
+  //   const treeHeight = Math.floor(Math.random() * (height() - 180))
 
   //   add([
-  //     rect(48, rand(24, 148)),
+  //     rect(48, treeHeight),
   //     area(),
   //     outline(4),
   //     pos(width(), height() - 48),
@@ -48,41 +87,18 @@ scene("game", () => {
   //     move(LEFT, 240),
   //     "tree", // tag name to use for collision detection
   //   ])
-
-  //   // spawn them some time between half and one and a half seconds
-  //   wait(rand(0.5, 1.5)), () => {
-  //     spawnTree()
-  //   }
-  // }
-
-  // spawnTree()
-
-  // have "trees" come continuously every 0.5-1.5 seconds
-  loop(rand(0.5, 1.5), () => {
-    const treeHeight = Math.floor(Math.random() * (height() - 180))
-
-    add([
-      rect(48, treeHeight),
-      area(),
-      outline(4),
-      pos(width(), height() - 48),
-      anchor("botleft"), // bottom left
-      color(255, 180, 255),
-      move(LEFT, 240),
-      "tree", // tag name to use for collision detection
-    ])
-  })
+  // })
 
   // keep track of the time/score of the player
   let score = 0
   const scoreLabel = add([
-    text(score),
+    text("SCORE: 0"),
     pos(24, 24)
   ])
 
   onUpdate(() => {
     score++
-    scoreLabel.text = score
+    scoreLabel.text = `SCORE: ${Math.floor(score / 10)}`
   })
 
   smiley.onCollide("tree", () => {
@@ -97,13 +113,13 @@ scene("game", () => {
 // setup the loss after collision scene
 scene("lose", (score) => {
   add([
-    text("Game Over"),
+    text("You lost!\nGreat game!"),
     pos(center()),
     anchor("center"),
   ]);
 
   add([
-    text(score),
+    text(`Final score: ${Math.floor(score / 10)} points.`),
     pos(width() / 2, height() / 2 + 80),
     scale(2),
     anchor("center")
@@ -114,3 +130,9 @@ scene("lose", (score) => {
 });
 
 go("game");
+
+// const bg = new Image()
+// bg.src = "sprites/pexels-ersinizan-23408706.jpg"
+// bg.onload = function() {
+//   document.querySelector("canvas").getContext("2d").drawImage(bg, 0, 0)
+// }
